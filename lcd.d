@@ -5,3 +5,4 @@
 .\lcd.o: ST7735.h
 .\lcd.o: LCD.h
 .\lcd.o: ../inc/tm4c123gh6pm.h
+.\lcd.o: LED.h

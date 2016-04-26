@@ -58,8 +58,10 @@ ESP8266    TM4C123
 #include "LCD.h"
 #include "UART.h"
 // Access point parameters
-#define SSID_NAME  "NathanAP"
-#define PASSKEY    "12345678"
+//#define SSID_NAME  "NathanAP"
+//#define PASSKEY    "12345678"
+#define SSID_NAME "Nathan's iPhone"
+#define PASSKEY "lolol111"
 //#define SEC_TYPE   ESP8266_ENCRYPT_MODE_WPA2_PSK
 
 #define BUFFER_SIZE 1024

@@ -30,16 +30,7 @@
  http://users.ece.utexas.edu/~valvano/
  */
 
-
-#define GPIO_LOCK_KEY           0x4C4F434B  // Unlocks the GPIO_CR register
-#define PF0                     (*((volatile uint32_t *)0x40025004))
-#define PF4                     (*((volatile uint32_t *)0x40025040))
-#define SWITCHES                (*((volatile uint32_t *)0x40025044))
-#define SW1       0x10                      // on the left side of the Launchpad board
-#define SW2       0x01                      // on the right side of the Launchpad board
-#define PF1                     (*((volatile uint32_t *)0x40025008))
-#define PF2                     (*((volatile uint32_t *)0x40025010))
-#define PF3                     (*((volatile uint32_t *)0x40025020))
+#define PB7      (*((volatile unsigned long *)0x40005200))
 
 //------------LED_Init------------
 // Initialize GPIO Port F for negative logic switches on PF0 and
@@ -49,96 +40,27 @@
 // Input: none
 // Output: none
 void LED_Init(void){       
-  SYSCTL_RCGCGPIO_R |= 0x20;     // 1) activate Port F
-  while((SYSCTL_PRGPIO_R & 0x20)!=0x20){}; // wait to finish activating     
-  GPIO_PORTF_LOCK_R = GPIO_LOCK_KEY;// 2a) unlock GPIO Port F Commit Register
-  GPIO_PORTF_CR_R = 0x1F;        // 2b) enable commit for PF4-PF0     
-  GPIO_PORTF_AMSEL_R &= ~0x1F;   // 3) disable analog functionality on PF4-PF0     
-  GPIO_PORTF_PCTL_R = 0x00000000;// 4) configure PF0-PF4 as GPIO
-  GPIO_PORTF_DIR_R = 0x0E;       // 5) make PF0 and PF4 in PF3-1 output                        
-  GPIO_PORTF_AFSEL_R = 0;        // 6) disable alt funct on PF0 and PF4
-  GPIO_PORTF_PUR_R = 0x11;       // enable weak pull-up on PF0 and PF4
-  GPIO_PORTF_DEN_R = 0x1F;       // 7) enable digital I/O on PF0-PF4
+  SYSCTL_RCGCGPIO_R |= 0x02;     // 1) activate Port F
+  while((SYSCTL_PRGPIO_R & 0x02)!=0x02){}; // wait to finish activating      
+	GPIO_PORTB_AMSEL_R &= ~0x80;
+	GPIO_PORTB_PCTL_R &= ~0xF0000000;
+	GPIO_PORTB_DEN_R = 0x80;
+	GPIO_PORTB_AFSEL_R &= ~0x80;
+	GPIO_PORTB_DIR_R |= 0x80;       
 }
 
-//------------Board_Input------------
-// Read and return the status of the switches.
-// Input: none
-// Output: 2 if only Switch 1 is pressed
-//         1 if only Switch 2 is pressed
-//         3 if both switches are pressed
-//         0 if no switches are pressed
-uint32_t Board_Input(void){
-  return (~((PF4>>3)+PF0))&0x03;
-}
-//------------LED_RedOn------------
-// Turn on red LED
-// Input: none
-// Output: none
-void LED_RedOn(void){
-  PF1 = 0x02;
-}
-//------------LED_RedOff------------
-// Turn off red LED
-// Input: none
-// Output: none
-void LED_RedOff(void){
-  PF1 = 0x00;
-}
-//------------LED_RedToggle------------
-// Toggle redv LED
-// Input: none
-// Output: none
-void LED_RedToggle(void){
-  PF1 ^= 0x02;
-}
-//------------LED_BlueToggle------------
-// Toggle blue LED
-// Input: none
-// Output: none
-void LED_BlueToggle(void){
-  PF2 ^= 0x04;
-}
-//------------LED_GreenToggle------------
-// Toggle green LED
-// Input: none
-// Output: none
-void LED_GreenToggle(void){
-  PF3 ^= 0x08;
-}
+
 //------------LED_GreenOn------------
 // Turn on green LED
 // Input: none
 // Output: none
 void LED_GreenOn(void){
-  PF3 = 0x08;
+  PB7  = 0x80;
 }
 //------------LED_GreenOff------------
 // Turn off green LED
 // Input: none
 // Output: none
 void LED_GreenOff(void){
-  PF3 = 0x00;
+  PB7  = 0x00;
 }
-
-/*
-	SYSCTL_RCGCGPIO_R |= 0x20;       // activate port F
-	delay = SYSCTL_RCGCGPIO_R;       // allow time to finish activating
-	GPIO_PORTF_DIR_R |= 0x0E;        // make PF3-1 output (PF3-1 built-in LEDs)
-	GPIO_PORTF_AFSEL_R &= ~0x0E;     // disable alt funct on PF3-1
-	GPIO_PORTF_DEN_R |= 0x0E;        // enable digital I/O on PF3-1
-																	 // configure PF3-1 as GPIO
-	GPIO_PORTF_PCTL_R = (GPIO_PORTF_PCTL_R&0xFFFF000F)+0x00000000;
-	GPIO_PORTF_AMSEL_R = 0;          // disable analog functionality on PF
-	LEDS = 0;                        // turn all LEDs off
-//Timer2_Init(&UserTask, 4000);    // initialize timer2 (20,000 Hz)
-	Timer2_Init(&UserTask, 5000000); // initialize timer2 (16 Hz)
-//Timer2_Init(&UserTask, 80000000);// initialize timer2 (1 Hz)
-//Timer2_Init(&UserTask, 0xFFFFFFFF); // initialize timer2 (slowest rate)
-	
-	EnableInterrupts();
-
-	while(1){
-		WaitForInterrupt();
-	}
-*/

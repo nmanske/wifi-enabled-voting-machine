@@ -43,7 +43,7 @@ void PortE_Switch_Init(void){
 uint8_t Switch_Input(void){				
 	if(((PE3>>3) || (PE2>>2) || (PE1>>1) || PE0) == 0){return 0;}
 	DelayWait10ms(5);
-	value = PE2;
+	value = PE3+PE2+PE1+PE0;
 	if(((PE3>>3) || (PE2>>2) || (PE1>>1) || PE0) != 0){
 		while(((PE3>>3) || (PE2>>2) || (PE1>>1) || PE0) != 0){};
 		return value;

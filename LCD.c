@@ -4,6 +4,7 @@
 #include "ST7735.h"
 #include "LCD.h"
 #include "../inc/tm4c123gh6pm.h"
+#include "LED.h"
 
 #define NELEMS(x)  (sizeof(x) / sizeof((x)[0]))
 #define DESELECT 0
@@ -40,6 +41,7 @@ void EnableScreenInit(){
 
 // display when wifi init fails
 void ErrorScreenInit(){
+	LED_GreenOff();
 	ST7735_DrawStringS(0,0,"CONNECTION",ST7735_WHITE,2);
 	ST7735_DrawStringS(0,2,"ERROR...",ST7735_WHITE,2);
 	ST7735_DrawStringS(0,5,"CHECK AND",ST7735_WHITE,2);
@@ -90,6 +92,15 @@ void PinVerifyScreen(char *pin){
 	ST7735_DrawStringS(0,6,"SERVER..",ST7735_WHITE,2);
 }
 
+void BallotSendScreen(char *pin){
+	ST7735_FillScreen(ST7735_BLUE);
+	ST7735_DrawStringS(0,0,"SENDING",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,2,pin,ST7735_WHITE,2);
+	ST7735_DrawStringS(0,4,"BALLOT",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,6,"TO THE",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,8,"SERVER..",ST7735_WHITE,2);
+}
+
 void PinFailScreen(char *pin){
 	ST7735_FillScreen(ST7735_BLUE);
 	ST7735_DrawStringS(0,0,"PIN ",ST7735_WHITE,2);
@@ -104,8 +115,18 @@ void CastBallotScreen(void){
 	ST7735_DrawStringS(0,0,"END OF",ST7735_WHITE,2);
 	ST7735_DrawStringS(0,2,"BALLOT!",ST7735_WHITE,2);
 	ST7735_DrawStringS(0,5,"PRESS CAST",ST7735_WHITE,2);
-	ST7735_DrawStringS(0,7,"VOTE BUTTON",ST7735_WHITE,2);
-	ST7735_DrawStringS(0,9,"TO SUBMIT",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,7,"VOTE",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,9,"BUTTON",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,11,"TO SUBMIT", ST7735_WHITE,2);
+}
+
+void VoteSentScreen(void) {
+	ST7735_FillScreen(ST7735_BLUE);
+	ST7735_DrawStringS(0,0,"VOTE",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,2,"WAS CASTED",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,5,"PRESS",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,7,"ENTER",ST7735_WHITE,2);
+	ST7735_DrawStringS(0,9,"FOR NEXT",ST7735_WHITE,2);
 }
 
 void SelectionScreenInit(uint8_t screen_num){
@@ -228,3 +249,12 @@ void DrawSelectedBox(uint8_t screen_num, uint8_t choice){
 	}
 	ST7735_FillRect(15,1+(choice*33),8,8,ST7735_RED);
 }
+
+void DeselectedBox(uint8_t screen_num){
+	int i;
+	for(i = numScreenChoices[screen_num]-1; i>=0 ; i--){
+		ST7735_FillRect(15,34+(i*33),8,8,ST7735_BLUE);
+	}
+}
+
+
