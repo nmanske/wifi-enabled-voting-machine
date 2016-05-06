@@ -360,8 +360,9 @@ void ESP8266_Init(uint32_t baud){
   printf("ESP8266 Initialization:\n\r");
   ESP8266_EchoResponse = true; // debugging
   if(ESP8266_Reset()==0){
-    printf("Reset failure, could not reset\n\r"); 
-		ErrorScreenInit();
+    printf("Reset failure, could not reset\n\r");
+		
+		ErrorScreenInit(1);
 		while(1){};
   }
 //  ESP8266SendCommand("AT+UART_CUR=115200,8,1,0,0\r\n");
@@ -371,14 +372,15 @@ void ESP8266_Init(uint32_t baud){
   
 // step 2: AT+CWMODE=1 set wifi mode to AP mode (host)
 	if(ESP8266_SetWifiMode(3)==0){ 
-    printf("SetWifiMode, could not set mode\n\r");
-		ErrorScreenInit();
+    printf("SetWifiMode, could not set mode2\n\r");
+		
+		ErrorScreenInit(2);
 		while(1){};
   }
 // step 3: AT+CWJAP="ValvanoAP","12345678"  connect to access point 
   if(ESP8266_JoinAccessPoint(SSID_NAME,PASSKEY)==0){ 
     printf("JoinAccessPoint error, could not join AP\n\r"); 
-		ErrorScreenInit();
+		ErrorScreenInit(3);
 		while(1){};
   }
 // optional step: AT+CIFSR check to see our IP address
@@ -396,7 +398,7 @@ void ESP8266_Init(uint32_t baud){
 // step 4: AT+CIPMODE=0 set mode to not data mode
   if(ESP8266_SetDataTransmissionMode(0)==0){ 
     printf("SetDataTransmissionMode, could not make connection\n\r"); 
-		ErrorScreenInit();
+		ErrorScreenInit(4);
 		while(1){};
   }
   ESP8266_InputProcessingEnabled = false; // not a server

@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include "../inc/tm4c123gh6pm.h"
+#include "ST7735.h"
 
 #define PE0  (*((volatile unsigned long *)0x40024004))
 #define PE1  (*((volatile unsigned long *)0x40024008))
@@ -44,8 +45,8 @@ uint8_t Switch_Input(void){
 	if(((PE3>>3) || (PE2>>2) || (PE1>>1) || PE0) == 0){return 0;}
 	DelayWait10ms(5);
 	value = PE3+PE2+PE1+PE0;
-	if(((PE3>>3) || (PE2>>2) || (PE1>>1) || PE0) != 0){
-		while(((PE3>>3) || (PE2>>2) || (PE1>>1) || PE0) != 0){};
+	if(((PE3>>3) || (PE2>>2) || (PE1>>1) || PE0) == 1){
+		while(((PE3>>3) || (PE2>>2) || (PE1>>1) || PE0) == 1){};
 		return value;
 	}
 	return 0;

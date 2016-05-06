@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 void EnableScreenInit(void);
-void ErrorScreenInit(void);
+void ErrorScreenInit(int i);
 void PinScreenInit(void);
 void PinVerifyScreen(char *pin);
 void PinFailScreen(char *pin);

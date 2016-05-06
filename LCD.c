@@ -40,13 +40,14 @@ void EnableScreenInit(){
 }
 
 // display when wifi init fails
-void ErrorScreenInit(){
+void ErrorScreenInit(int i){
 	LED_GreenOff();
 	ST7735_DrawStringS(0,0,"CONNECTION",ST7735_WHITE,2);
 	ST7735_DrawStringS(0,2,"ERROR...",ST7735_WHITE,2);
 	ST7735_DrawStringS(0,5,"CHECK AND",ST7735_WHITE,2);
 	ST7735_DrawStringS(0,7,"RESTART!",ST7735_WHITE,2);
 	ST7735_DrawStringS(0,11,":(",ST7735_WHITE,2);
+	ST7735_OutUDec(i);
 	while(1){}
 }
 

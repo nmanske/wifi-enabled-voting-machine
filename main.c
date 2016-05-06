@@ -114,8 +114,10 @@ int main(void){
 	printf("\n\r-----------\n\rSystem starting...\n\r");
 	EnableScreenInit();
 	LED_GreenOn();
+	
   ESP8266_Init(115200);      // connect to access point, set up as client
   ESP8266_GetVersionNumber();
+	
 	LED_GreenOff();
 	
 	// INIT STARTING PIN SCREEN
@@ -184,30 +186,31 @@ int main(void){
 				else{
 					userChoices[currScreenState] = (char)(currRectState+48);
 					DrawSelectedBox(currScreenState,currRectState);
-				}
-				DelayWait10ms(500);
-				currScreenState++;
-				if(currScreenState <= VOTE_5){
-					SelectionScreenInit(currScreenState);
-					if(currScreenState == VOTE_1 || currScreenState == VOTE_4 || currScreenState == VOTE_5){
-						currRectState = ADCRectState(4);
-						if( userChoices[currScreenState] != ' '){
-							DrawSelectedBox(currScreenState, userChoices[currScreenState] - '0');
+					DelayWait10ms(500);
+					currScreenState++;
+					if(currScreenState <= VOTE_5){
+						SelectionScreenInit(currScreenState);
+						if(currScreenState == VOTE_1 || currScreenState == VOTE_4 || currScreenState == VOTE_5){
+							currRectState = ADCRectState(4);
+							if( userChoices[currScreenState] != ' '){
+								DrawSelectedBox(currScreenState, userChoices[currScreenState] - '0');
+							}
 						}
-					}
-					else if(currScreenState == VOTE_2 || currScreenState == VOTE_3){
-						currRectState = ADCRectState(3);
-						if( userChoices[currScreenState] != ' '){
-							DrawSelectedBox(currScreenState, userChoices[currScreenState] - '0');
+						else if(currScreenState == VOTE_2 || currScreenState == VOTE_3){
+							currRectState = ADCRectState(3);
+							if( userChoices[currScreenState] != ' '){
+								DrawSelectedBox(currScreenState, userChoices[currScreenState] - '0');
+							}
 						}
+						SelectChoice(currRectState);
 					}
-					SelectChoice(currRectState);
+					else{
+						currScreenState = END;
+						CastBallotScreen();
+						currRectState = ADCRectState(0); 
+					}
 				}
-				else{
-					currScreenState = END;
-					CastBallotScreen();
-					currRectState = ADCRectState(0); 
-				}
+				
 			}
 			else if(button == NEXT_SCREEN){
 				DelayWait10ms(500);
@@ -286,8 +289,12 @@ int main(void){
 					currRectState = ADCRectState(4);
 				}
 				else if(currScreenState == VOTE_2 || currScreenState == VOTE_3){
-					currRectState = ADCRectState(3); 
+					currRectState = ADCRectState(3);
+								
 				} 
+				if(userChoices[currScreenState] != ' '){
+					DrawSelectedBox(currScreenState, userChoices[currScreenState] - '0');
+				}			
 				SelectChoice(currRectState);
 			}
 		}
@@ -304,7 +311,7 @@ uint8_t isPinValid(void){
 		ESP8266_SendTCP(GET_PIN);	//AT+CIPSEND=?
 	}
 	else{
-		ErrorScreenInit();
+		ErrorScreenInit(5);
 	}
 	ESP8266_CloseTCPConnection();
 	LED_GreenOff();
@@ -336,7 +343,7 @@ void castBallot(void){
 		ESP8266_SendTCP(POST_BALLOT);	//AT+CIPSEND=?
 	}
 	else{
-		ErrorScreenInit();
+		ErrorScreenInit(6);
 	}
 	ESP8266_CloseTCPConnection();
 	LED_GreenOff();
